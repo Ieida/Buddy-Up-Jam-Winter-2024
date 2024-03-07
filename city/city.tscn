@@ -1,0 +1,118 @@
+[gd_scene load_steps=10 format=3 uid="uid://dgm5qjcqgveo1"]
+
+[ext_resource type="PackedScene" uid="uid://cn3q0t4vcj5k8" path="res://city/models/plots.glb" id="1_1cv2n"]
+[ext_resource type="PackedScene" uid="uid://cib3eff1syyso" path="res://city/plots/plot.tscn" id="2_raxsc"]
+[ext_resource type="PackedScene" uid="uid://dmtw5rnua1f6i" path="res://city/models/destroyed_building.glb" id="5_anlvs"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_csyya"]
+
+[sub_resource type="Sky" id="Sky_3adij"]
+sky_material = SubResource("ProceduralSkyMaterial_csyya")
+
+[sub_resource type="Environment" id="Environment_2sw6x"]
+background_mode = 2
+sky = SubResource("Sky_3adij")
+ambient_light_source = 3
+reflected_light_source = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xgdph"]
+albedo_color = Color(0.0156863, 0.0156863, 0.0156863, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_a7cfc"]
+material = SubResource("StandardMaterial3D_xgdph")
+size = Vector2(200, 200)
+
+[sub_resource type="GDScript" id="GDScript_h7463"]
+resource_name = "camera"
+script/source = "extends Camera3D
+
+@export var pivot: Node3D
+@export var sensitivity: float = 0.1
+@export var zoom_min: float = 2
+@export var zoom_max: float = 10
+@export var zoom_time: float = 0.2
+@export_range(0.0, 1.0) var zoom_amount: float = 0.5
+var x: float
+var y: float
+
+func _ready():
+	position.z = zoom_min + ((zoom_max - zoom_min) * zoom_amount)
+	x = clampf(pivot.rotation_degrees.x, -80, -10)
+	y = wrapf(pivot.rotation_degrees.y, 0, 360)
+	pivot.basis = Basis()
+	pivot.rotate_y(deg_to_rad(y))
+	pivot.rotation_degrees.x = x
+
+func _input(event):
+	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and event is InputEventMouseMotion:
+		look_x(-event.relative.y * sensitivity)
+		look_y(-event.relative.x * sensitivity)
+
+func _process(delta):
+	pivot.basis = Basis()
+	pivot.rotate_y(deg_to_rad(y))
+	pivot.rotation_degrees.x = x
+	
+	if Input.is_action_just_pressed(\"rotate_camera\"):
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	elif Input.is_action_just_released(\"rotate_camera\"):
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	
+	if Input.is_action_just_pressed(\"zoom_in\"):
+		var p = clampf(position.z - 1, zoom_min, zoom_max)
+		var t = create_tween()
+		t.tween_property(self, \"position:z\", p, zoom_time)
+	elif Input.is_action_just_pressed(\"zoom_out\"):
+		var p = clampf(position.z + 1, zoom_min, zoom_max)
+		var t = create_tween()
+		t.tween_property(self, \"position:z\", p, zoom_time)
+
+func look_x(a: float):
+	x = clampf(x + a, -80, -10)
+
+func look_y(a: float):
+	y = wrapf(y + a, 0, 360)
+"
+
+[node name="City" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_2sw6x")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 0, 0)
+shadow_enabled = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_a7cfc")
+
+[node name="CameraPivot" type="Marker3D" parent="."]
+transform = Transform3D(0.927184, -0.264887, 0.264887, 0, 0.707107, 0.707107, -0.374607, -0.655618, 0.655618, 1.25, 0, -1.25)
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot" node_paths=PackedStringArray("pivot")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6)
+script = SubResource("GDScript_h7463")
+pivot = NodePath("..")
+zoom_min = 4.0
+
+[node name="Plots" parent="." instance=ExtResource("1_1cv2n")]
+
+[node name="Plot" parent="Plots" node_paths=PackedStringArray("building") instance=ExtResource("2_raxsc")]
+building = NodePath("destroyed_building")
+
+[node name="destroyed_building" parent="Plots/Plot" instance=ExtResource("5_anlvs")]
+
+[node name="Plot2" parent="Plots" node_paths=PackedStringArray("building") instance=ExtResource("2_raxsc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 0)
+building = NodePath("destroyed_building")
+
+[node name="destroyed_building" parent="Plots/Plot2" instance=ExtResource("5_anlvs")]
+
+[node name="Plot3" parent="Plots" node_paths=PackedStringArray("building") instance=ExtResource("2_raxsc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
+building = NodePath("destroyed_building")
+
+[node name="destroyed_building" parent="Plots/Plot3" instance=ExtResource("5_anlvs")]
+
+[node name="Plot4" parent="Plots" instance=ExtResource("2_raxsc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -2.5)
