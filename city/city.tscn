@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://dgm5qjcqgveo1"]
+[gd_scene load_steps=10 format=3 uid="uid://dgm5qjcqgveo1"]
 
 [ext_resource type="PackedScene" uid="uid://cn3q0t4vcj5k8" path="res://city/models/plots.glb" id="1_1cv2n"]
 [ext_resource type="PackedScene" uid="uid://cib3eff1syyso" path="res://city/plots/plot.tscn" id="2_raxsc"]
@@ -14,6 +14,13 @@ background_mode = 2
 sky = SubResource("Sky_3adij")
 ambient_light_source = 3
 reflected_light_source = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xgdph"]
+albedo_color = Color(0.0156863, 0.0156863, 0.0156863, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_a7cfc"]
+material = SubResource("StandardMaterial3D_xgdph")
+size = Vector2(200, 200)
 
 [sub_resource type="GDScript" id="GDScript_h7463"]
 resource_name = "camera"
@@ -72,8 +79,11 @@ environment = SubResource("Environment_2sw6x")
 transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 0, 0)
 shadow_enabled = true
 
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_a7cfc")
+
 [node name="CameraPivot" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 0, -1.25)
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 1.25, 0, -1.25)
 
 [node name="Camera3D" type="Camera3D" parent="CameraPivot" node_paths=PackedStringArray("pivot")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6)

@@ -72,9 +72,13 @@ gradient = SubResource("Gradient_6vrbd")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_46swr"]
 resource_local_to_scene = true
-emission_shape = 3
-emission_box_extents = Vector3(1, 1, 1)
+emission_shape = 6
+emission_ring_axis = Vector3(0, 1, 0)
+emission_ring_height = 1.0
+emission_ring_radius = 1.0
+emission_ring_inner_radius = 1.0
 direction = Vector3(0, 1, 0)
+spread = 0.0
 initial_velocity_min = 1.0
 initial_velocity_max = 1.0
 gravity = Vector3(0, 0, 0)
@@ -109,7 +113,6 @@ script = SubResource("GDScript_nlkxi")
 shape = SubResource("BoxShape3D_qtj6n")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 emitting = false
 lifetime = 2.0
 one_shot = true
