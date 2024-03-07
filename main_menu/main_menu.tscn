@@ -1,4 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://deae8cx1ypy6j"]
+[gd_scene load_steps=4 format=3 uid="uid://deae8cx1ypy6j"]
+
+[ext_resource type="PackedScene" uid="uid://dgm5qjcqgveo1" path="res://city/city.tscn" id="1_6jjsu"]
 
 [sub_resource type="GDScript" id="GDScript_lijc6"]
 resource_name = "play"
@@ -62,6 +64,7 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Play"
 script = SubResource("GDScript_lijc6")
+scene = ExtResource("1_6jjsu")
 
 [node name="Quit" type="Button" parent="VBoxContainer"]
 custom_minimum_size = Vector2(200, 50)
