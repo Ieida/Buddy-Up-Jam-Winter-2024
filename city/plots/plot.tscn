@@ -1,0 +1,117 @@
+[gd_scene load_steps=14 format=3 uid="uid://cib3eff1syyso"]
+
+[ext_resource type="PackedScene" uid="uid://bgs68tnyicijt" path="res://city/models/building.glb" id="1_syuj6"]
+[ext_resource type="PackedScene" uid="uid://pgytsg44lncg" path="res://city/models/garden.glb" id="2_6rgch"]
+[ext_resource type="PackedScene" uid="uid://brj0mbxdnyvpf" path="res://city/models/tall_building.glb" id="3_v32ry"]
+
+[sub_resource type="GDScript" id="GDScript_e34mi"]
+resource_name = "plot"
+script/source = "extends Marker3D
+
+@export_category(\"Plot\")
+@export var area: Area3D
+@export var destroy_effect: GPUParticles3D
+@export var buildings: Array[PackedScene]
+@export var building: Node3D
+
+func _ready():
+	area.input_event.connect(_on_area_input_event)
+
+func _on_area_input_event(camera: Node, event: InputEvent, position: Vector3, normal: Vector3, shape_idx: int):
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			place_or_destroy()
+
+var is_busy: bool = false
+func place_or_destroy():
+	if is_busy: return
+	is_busy = true
+	if building: await destroy()
+	else: await place()
+	is_busy = false
+
+func place():
+	destroy_effect.restart()
+	await get_tree().create_timer(1).timeout
+	var b = buildings.pick_random() as PackedScene
+	b = b.instantiate() as Node3D
+	add_child(b)
+	b.global_position = global_position
+	building = b
+
+func destroy():
+	destroy_effect.restart()
+	await get_tree().create_timer(1).timeout
+	building.queue_free()
+	building = null
+"
+
+[sub_resource type="GDScript" id="GDScript_nlkxi"]
+resource_name = "plot"
+script/source = "extends Area3D
+"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qtj6n"]
+resource_local_to_scene = true
+size = Vector3(2, 1, 2)
+
+[sub_resource type="Curve" id="Curve_tfdnf"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_sgrhr"]
+resource_local_to_scene = true
+curve = SubResource("Curve_tfdnf")
+
+[sub_resource type="Gradient" id="Gradient_6vrbd"]
+resource_local_to_scene = true
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_dg1lj"]
+resource_local_to_scene = true
+gradient = SubResource("Gradient_6vrbd")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_46swr"]
+resource_local_to_scene = true
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 1.0
+initial_velocity_max = 1.0
+gravity = Vector3(0, 0, 0)
+color_ramp = SubResource("GradientTexture1D_dg1lj")
+alpha_curve = SubResource("CurveTexture_sgrhr")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x8t0h"]
+resource_local_to_scene = true
+transparency = 1
+vertex_color_use_as_albedo = true
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_g2lgx"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_x8t0h")
+
+[node name="Plot" type="Marker3D" node_paths=PackedStringArray("area", "destroy_effect")]
+gizmo_extents = 1.0
+script = SubResource("GDScript_e34mi")
+area = NodePath("Area3D")
+destroy_effect = NodePath("GPUParticles3D")
+buildings = Array[PackedScene]([ExtResource("1_syuj6"), ExtResource("2_6rgch"), ExtResource("3_v32ry")])
+
+[node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+script = SubResource("GDScript_nlkxi")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_qtj6n")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+emitting = false
+lifetime = 2.0
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_46swr")
+draw_pass_1 = SubResource("QuadMesh_g2lgx")
