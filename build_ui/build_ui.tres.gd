@@ -1,8 +1,6 @@
 extends Control
 class_name BuildUI
 
-signal option_picked()
-
 @export var option_container: Container
 @export var option_button: PackedScene
 var options: Dictionary
