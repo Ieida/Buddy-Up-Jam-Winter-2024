@@ -1,0 +1,111 @@
+[gd_scene load_steps=16 format=3 uid="uid://0tj8kh5cx012"]
+
+[ext_resource type="Script" path="res://city/buildings/building.tres.gd" id="1_qcwuj"]
+[ext_resource type="PackedScene" uid="uid://ihvg3smb6x0t" path="res://selectable/selectable.tscn" id="2_5w4x4"]
+[ext_resource type="PackedScene" uid="uid://cge5y03p0p7hh" path="res://build_ui/build_ui.tscn" id="2_8d6fh"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5s1v2"]
+resource_local_to_scene = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yheeo"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_us65y"]
+_surfaces = [{
+"aabb": AABB(-0.787868, 4.47035e-08, -0.787868, 1.57574, 2, 1.57575),
+"format": 34896613377,
+"index_count": 60,
+"index_data": PackedByteArray(10, 0, 1, 0, 0, 0, 1, 0, 9, 0, 2, 0, 1, 0, 10, 0, 9, 0, 9, 0, 5, 0, 2, 0, 5, 0, 11, 0, 4, 0, 5, 0, 9, 0, 11, 0, 5, 0, 7, 0, 6, 0, 7, 0, 4, 0, 3, 0, 7, 0, 5, 0, 4, 0, 3, 0, 8, 0, 7, 0, 8, 0, 0, 0, 1, 0, 8, 0, 3, 0, 0, 0, 10, 0, 4, 0, 11, 0, 4, 0, 0, 0, 3, 0, 4, 0, 10, 0, 0, 0, 1, 0, 6, 0, 8, 0, 6, 0, 2, 0, 5, 0, 6, 0, 1, 0, 2, 0, 8, 0, 6, 0, 7, 0, 10, 0, 11, 0, 9, 0),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 254, 255, 0, 0, 0, 0, 255, 255, 254, 255, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 255, 255, 0, 0, 254, 255, 0, 0, 255, 255, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255, 140, 95, 0, 0, 255, 255, 156, 166, 254, 255, 0, 0, 140, 95, 255, 255, 254, 255, 0, 0, 0, 0, 69, 48, 0, 0, 0, 0, 0, 0, 0, 0, 164, 86, 0, 0, 164, 86, 0, 0, 0, 0, 0, 0)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_3r8qc"]
+resource_name = "destroyed_building_Cube_005"
+_surfaces = [{
+"aabb": AABB(-0.787868, 4.47035e-08, -0.787868, 1.57574, 2, 1.57575),
+"attribute_data": PackedByteArray(255, 95, 255, 255, 255, 31, 255, 63, 255, 95, 0, 0, 255, 159, 255, 255, 255, 159, 0, 0, 255, 223, 255, 63, 255, 159, 255, 191, 255, 159, 255, 191, 255, 223, 255, 127, 255, 95, 255, 63, 255, 95, 255, 63, 255, 95, 255, 63, 255, 95, 255, 127, 255, 95, 255, 127, 255, 95, 255, 127, 255, 159, 255, 127, 255, 159, 255, 127, 255, 159, 255, 127, 255, 159, 28, 104, 4, 86, 76, 116, 255, 159, 28, 104, 166, 137, 255, 63, 171, 63, 178, 84, 166, 137, 255, 63, 255, 159, 227, 23, 28, 200, 255, 63, 82, 41, 76, 116, 16, 108, 255, 191, 143, 190, 182, 102, 16, 108, 255, 191, 255, 95, 168, 213, 161, 202, 165, 85, 255, 31, 86, 106, 126, 178, 165, 85, 169, 53, 255, 127, 255, 95, 86, 170),
+"format": 34896613399,
+"index_count": 60,
+"index_data": PackedByteArray(30, 0, 3, 0, 0, 0, 3, 0, 27, 0, 6, 0, 3, 0, 30, 0, 27, 0, 29, 0, 15, 0, 7, 0, 15, 0, 35, 0, 13, 0, 15, 0, 29, 0, 35, 0, 17, 0, 23, 0, 20, 0, 23, 0, 14, 0, 11, 0, 23, 0, 17, 0, 14, 0, 10, 0, 24, 0, 21, 0, 24, 0, 2, 0, 4, 0, 24, 0, 10, 0, 2, 0, 32, 0, 12, 0, 34, 0, 12, 0, 1, 0, 9, 0, 12, 0, 32, 0, 1, 0, 5, 0, 18, 0, 25, 0, 18, 0, 8, 0, 16, 0, 18, 0, 5, 0, 8, 0, 26, 0, 19, 0, 22, 0, 31, 0, 33, 0, 28, 0),
+"material": SubResource("StandardMaterial3D_yheeo"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 36,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 254, 255, 84, 213, 0, 0, 0, 0, 254, 255, 255, 191, 0, 0, 0, 0, 254, 255, 255, 191, 0, 0, 255, 255, 254, 255, 84, 213, 0, 0, 255, 255, 254, 255, 255, 191, 0, 0, 255, 255, 254, 255, 255, 255, 0, 0, 255, 255, 0, 0, 84, 213, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 255, 255, 0, 0, 254, 255, 255, 191, 255, 255, 0, 0, 254, 255, 255, 191, 255, 255, 0, 0, 254, 255, 84, 213, 255, 255, 0, 0, 0, 0, 255, 191, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 84, 213, 255, 255, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 0, 0, 84, 213, 255, 255, 255, 255, 140, 95, 255, 255, 255, 255, 255, 255, 140, 95, 87, 83, 255, 255, 255, 255, 140, 95, 84, 213, 255, 255, 156, 166, 254, 255, 255, 191, 255, 255, 156, 166, 254, 255, 87, 83, 255, 255, 156, 166, 254, 255, 84, 213, 140, 95, 255, 255, 254, 255, 255, 191, 140, 95, 255, 255, 254, 255, 255, 255, 140, 95, 255, 255, 254, 255, 87, 83, 0, 0, 69, 48, 0, 0, 84, 213, 0, 0, 69, 48, 0, 0, 114, 29, 0, 0, 69, 48, 0, 0, 255, 255, 0, 0, 0, 0, 164, 86, 84, 213, 0, 0, 0, 0, 164, 86, 114, 29, 0, 0, 0, 0, 164, 86, 255, 191, 164, 86, 0, 0, 0, 0, 114, 29, 164, 86, 0, 0, 0, 0, 255, 191, 164, 86, 0, 0, 0, 0, 255, 255, 84, 213, 84, 213, 0, 0, 255, 127, 255, 255, 255, 255, 84, 213, 84, 213, 255, 255, 255, 255, 255, 127, 255, 191, 84, 213, 84, 213, 255, 191, 255, 191, 255, 127, 255, 191, 0, 0, 255, 127, 255, 255, 255, 255, 170, 42, 170, 42, 0, 0, 255, 127, 255, 191, 255, 191, 170, 42, 170, 42, 255, 191, 255, 191, 255, 127, 255, 191, 170, 42, 170, 42, 255, 127, 255, 191, 250, 202, 4, 53, 170, 42, 170, 42, 255, 255, 255, 255, 250, 202, 4, 53, 170, 42, 170, 42, 255, 255, 255, 255, 255, 127, 255, 191, 250, 202, 4, 53, 84, 213, 84, 213, 183, 80, 37, 242, 255, 191, 255, 191, 84, 213, 84, 213, 183, 80, 37, 242, 0, 0, 255, 127, 183, 80, 37, 242, 0, 0, 255, 127, 255, 191, 255, 191)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_us65y")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_opoov"]
+size = Vector3(1.6, 1, 1.6)
+
+[sub_resource type="Curve" id="Curve_penyb"]
+resource_local_to_scene = true
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_2arri"]
+resource_local_to_scene = true
+curve = SubResource("Curve_penyb")
+
+[sub_resource type="Gradient" id="Gradient_llybo"]
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_nx0om"]
+resource_local_to_scene = true
+gradient = SubResource("Gradient_llybo")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_671wj"]
+resource_local_to_scene = true
+emission_shape_scale = Vector3(1, 1.5, 1)
+emission_shape = 3
+emission_box_extents = Vector3(0.8, 1, 0.8)
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = 0.5
+initial_velocity_max = 0.5
+gravity = Vector3(0, 0, 0)
+color_initial_ramp = SubResource("GradientTexture1D_nx0om")
+alpha_curve = SubResource("CurveTexture_2arri")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y7qkh"]
+resource_local_to_scene = true
+transparency = 1
+vertex_color_use_as_albedo = true
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_v213a"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_y7qkh")
+
+[node name="Building" type="Node3D" node_paths=PackedStringArray("selectable", "build_ui", "destroy_particles")]
+script = ExtResource("1_qcwuj")
+selectable = NodePath("Selectable")
+build_ui = NodePath("BuildUI")
+material = SubResource("StandardMaterial3D_5s1v2")
+destroy_particles = NodePath("GPUParticles3D")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("ArrayMesh_3r8qc")
+surface_material_override/0 = SubResource("StandardMaterial3D_5s1v2")
+
+[node name="Selectable" parent="." instance=ExtResource("2_5w4x4")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Selectable"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("BoxShape3D_opoov")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+emitting = false
+lifetime = 2.0
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_671wj")
+draw_pass_1 = SubResource("QuadMesh_v213a")
+
+[node name="BuildUI" parent="." instance=ExtResource("2_8d6fh")]

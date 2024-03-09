@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ihvg3smb6x0t"]
+
+[ext_resource type="Script" path="res://selectable/selectable.gd" id="1_htplm"]
+
+[node name="Selectable" type="Area3D"]
+script = ExtResource("1_htplm")

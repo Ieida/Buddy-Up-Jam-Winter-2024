@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8e0nsqn4paxs"]
+
+[sub_resource type="GDScript" id="GDScript_3q2x2"]
+resource_name = "building_button"
+script/source = "extends Button
+
+@export var option: BuildOption
+
+func _ready():
+	pressed.connect(_on_pressed)
+
+func _on_pressed():
+	option.pick()
+
+func _init_option(option_: BuildOption):
+	text = option_.option_name
+	option = option_
+"
+
+[node name="BuildOptionButton" type="Button"]
+custom_minimum_size = Vector2(80, 80)
+text = "Tall Building"
+script = SubResource("GDScript_3q2x2")
