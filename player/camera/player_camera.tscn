@@ -1,0 +1,231 @@
+[gd_scene load_steps=7 format=3 uid="uid://cswy2h5500dmt"]
+
+[ext_resource type="PackedScene" uid="uid://brj0mbxdnyvpf" path="res://city/models/tall_building.glb" id="1_stu25"]
+[ext_resource type="PackedScene" uid="uid://dxiw7dy1ie3f0" path="res://city/buildings/building.tscn" id="2_u451s"]
+[ext_resource type="PackedScene" uid="uid://pgytsg44lncg" path="res://city/models/garden.glb" id="3_303j5"]
+
+[sub_resource type="GDScript" id="GDScript_h7463"]
+resource_name = "camera"
+script/source = "extends Camera3D
+
+const MOVE_STATE_ROTATING = 2 
+
+@export var pivot: Node3D
+@export var raycast: RayCast3D
+@export var sensitivity: float = 0.1
+@export var vertical_min: float = -80
+@export var vertical_max: float = -50
+@export var zoom_min: float = 2
+@export var zoom_max: float = 10
+@export var zoom_time: float = 0.2
+@export_range(0.0, 1.0) var zoom_amount: float = 0.5
+@export_category(\"Panning\")
+@export var pan_speed: float = 4
+@export var pan_bounds: Vector3
+@export var use_range: bool = false
+@export var pan_range: float = 5
+var pan: Vector2
+var x: float
+var y: float
+var move_state = 0
+var previous_mouse_position: Vector2
+var selected: Array[Selectable]
+
+func _ready():
+	position.z = zoom_min + ((zoom_max - zoom_min) * zoom_amount)
+	x = clampf(pivot.rotation_degrees.x, vertical_min, vertical_max)
+	y = wrapf(pivot.rotation_degrees.y, 0, 360)
+	pivot.basis = Basis()
+	pivot.rotate_y(deg_to_rad(y))
+	pivot.rotation_degrees.x = x
+
+func _unhandled_input(event):
+	if event.is_action(\"select\"):
+		if event.is_pressed() and none_move_state():
+			var f = project_ray_origin(event.position)
+			var t = f + project_ray_normal(event.position) * 100.0
+			raycast.target_position = to_local(t - f)
+			raycast.force_raycast_update()
+			if raycast.is_colliding():
+				var c = raycast.get_collider()
+				if c is Selectable:
+					select(c)
+	elif event.is_action(\"rotate_camera\"):
+		if none_move_state():
+			previous_mouse_position = event.position
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		set_move_state(MOVE_STATE_ROTATING)
+		if none_move_state():
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			get_viewport().warp_mouse(previous_mouse_position)
+	elif event is InputEventMouseMotion:
+		if get_move_state(MOVE_STATE_ROTATING):
+			look_x(-event.relative.y * sensitivity)
+			look_y(-event.relative.x * sensitivity)
+
+func _process(delta):
+	pan = Input.get_vector(\"pan_left\", \"pan_right\", \"pan_backward\", \"pan_forward\")
+	pan *= pan_speed * delta
+	
+	panning()
+	rotating()
+	
+	if Input.is_action_just_pressed(\"zoom_in\"):
+		var p = clampf(position.z - 1, zoom_min, zoom_max)
+		var t = create_tween()
+		t.tween_property(self, \"position:z\", p, zoom_time)
+	elif Input.is_action_just_pressed(\"zoom_out\"):
+		var p = clampf(position.z + 1, zoom_min, zoom_max)
+		var t = create_tween()
+		t.tween_property(self, \"position:z\", p, zoom_time)
+
+#region MoveState
+func get_move_state(state) -> bool:
+	return move_state & state
+
+func none_move_state() -> bool:
+	return move_state == 0
+
+func set_move_state(state):
+	move_state ^= state
+#endregion
+
+#region Selecting
+func select(selectable: Selectable):
+	for sel in selected:
+		sel.deselect()
+	selected.clear()
+	var f = func d(): _on_selectable_deselected(selectable)
+	selectable.deselected.connect(f, CONNECT_ONE_SHOT)
+	selectable.select()
+	selected.append(selectable)
+
+func _on_selectable_deselected(selectable: Selectable):
+	selected.erase(selectable)
+#endregion
+
+func look_x(a: float):
+	x = clampf(x + a, vertical_min, vertical_max)
+
+func look_y(a: float):
+	y = wrapf(y + a, 0, 360)
+
+func panning():
+	var r = pivot.global_basis.x
+	var f = Vector3.UP.cross(r)
+	var p = (r * pan.x) + (f * pan.y)
+	var pp = pivot.global_position + p
+	if use_range:
+		pp = pp.normalized() * clampf(pp.length(), -pan_range, pan_range)
+	else:
+		pp = pp.clamp(-pan_bounds, pan_bounds)
+	pivot.global_position = pp
+	pan = Vector2.ZERO
+
+func rotating():
+	pivot.basis = Basis()
+	pivot.rotate_y(deg_to_rad(y))
+	pivot.rotation_degrees.x = x
+"
+
+[sub_resource type="GDScript" id="GDScript_vvhsy"]
+resource_name = "building_ui"
+script/source = "extends Control
+
+func _ready():
+	deactivate()
+
+func activate():
+	show()
+
+func deactivate():
+	hide()
+"
+
+[sub_resource type="GDScript" id="GDScript_kyff7"]
+resource_name = "building_button"
+script/source = "extends Button
+
+@export var building: PackedScene
+
+func _ready():
+	pressed.connect(_on_pressed)
+
+func _on_pressed():
+	get_tree().call_group(\"selected_plots\", \"build\", building)
+"
+
+[node name="PlayerCamera" type="Marker3D"]
+transform = Transform3D(0.927184, -0.264887, 0.264887, 0, 0.707107, 0.707107, -0.374607, -0.655618, 0.655618, 1.25, 0, -1.25)
+
+[node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("pivot", "raycast")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6)
+script = SubResource("GDScript_h7463")
+pivot = NodePath("")
+raycast = NodePath("")
+zoom_min = 4.0
+pan_bounds = Vector3(5, 0, 5)
+
+[node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
+enabled = false
+collide_with_areas = true
+
+[node name="Control" type="Control" parent="Camera3D" groups=["building_ui"]]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 3
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = SubResource("GDScript_vvhsy")
+
+[node name="ColorRect" type="ColorRect" parent="Camera3D/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12549, 0.12549, 0.12549, 0.498039)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Camera3D/Control"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera3D/Control/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="Button" type="Button" parent="Camera3D/Control/ScrollContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+text = "Tall Building"
+script = SubResource("GDScript_kyff7")
+building = ExtResource("1_stu25")
+
+[node name="Button2" type="Button" parent="Camera3D/Control/ScrollContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+text = "Short Building"
+script = SubResource("GDScript_kyff7")
+building = ExtResource("2_u451s")
+
+[node name="Button3" type="Button" parent="Camera3D/Control/ScrollContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+text = "Garden"
+script = SubResource("GDScript_kyff7")
+building = ExtResource("3_303j5")
