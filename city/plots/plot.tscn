@@ -150,10 +150,10 @@ gizmo_extents = 1.0
 script = SubResource("GDScript_e34mi")
 build_ui = NodePath("BuildUI")
 selectable = NodePath("Selectable")
-destroy_effect = NodePath("GPUParticles3D")
-mesh = NodePath("MeshInstance3D")
+destroy_effect = NodePath("ConstructionParticles")
+mesh = NodePath("Model")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="Model" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.11, 0)
 mesh = SubResource("ArrayMesh_cqlcq")
 surface_material_override/0 = SubResource("StandardMaterial3D_dgty8")
@@ -164,7 +164,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_dgty8")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.055, 0)
 shape = SubResource("BoxShape3D_qtj6n")
 
-[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+[node name="ConstructionParticles" type="GPUParticles3D" parent="."]
 emitting = false
 lifetime = 2.0
 one_shot = true
