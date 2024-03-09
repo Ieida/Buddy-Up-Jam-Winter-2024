@@ -161,8 +161,8 @@ transform = Transform3D(0.927184, -0.264887, 0.264887, 0, 0.707107, 0.707107, -0
 [node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("pivot", "raycast")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6)
 script = SubResource("GDScript_h7463")
-pivot = NodePath("")
-raycast = NodePath("")
+pivot = NodePath("..")
+raycast = NodePath("RayCast3D")
 zoom_min = 4.0
 pan_bounds = Vector3(5, 0, 5)
 
