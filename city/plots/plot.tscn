@@ -1,59 +1,106 @@
-[gd_scene load_steps=14 format=3 uid="uid://cib3eff1syyso"]
+[gd_scene load_steps=15 format=3 uid="uid://cib3eff1syyso"]
 
-[ext_resource type="PackedScene" uid="uid://bgs68tnyicijt" path="res://city/models/building.glb" id="1_syuj6"]
-[ext_resource type="PackedScene" uid="uid://pgytsg44lncg" path="res://city/models/garden.glb" id="2_6rgch"]
-[ext_resource type="PackedScene" uid="uid://brj0mbxdnyvpf" path="res://city/models/tall_building.glb" id="3_v32ry"]
+[ext_resource type="PackedScene" uid="uid://ihvg3smb6x0t" path="res://selectable/selectable.tscn" id="4_bsgbw"]
+[ext_resource type="PackedScene" uid="uid://cge5y03p0p7hh" path="res://build_ui/build_ui.tscn" id="5_tup3x"]
 
 [sub_resource type="GDScript" id="GDScript_e34mi"]
 resource_name = "plot"
 script/source = "extends Marker3D
 
 @export_category(\"Plot\")
-@export var area: Area3D
+@export var build_ui: BuildUI
+@export var default_building: PackedScene
+@export var selectable: Selectable
 @export var destroy_effect: GPUParticles3D
-@export var buildings: Array[PackedScene]
-@export var building: Node3D
+@export var mesh: MeshInstance3D
+@export var build_options: Array[BuildOption]
+var building: Building
 
 func _ready():
-	area.input_event.connect(_on_area_input_event)
+	selectable.selected.connect(_on_selectable_selected)
+	selectable.deselected.connect(_on_selectable_deselected)
+	
+	for o in build_options:
+		var od = o.duplicate()
+		add_build_option(od)
+	
+	if default_building:
+		build(default_building)
+	
+	select()
+	deselect()
 
-func _on_area_input_event(camera: Node, event: InputEvent, position: Vector3, normal: Vector3, shape_idx: int):
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			place_or_destroy()
+func _on_selectable_selected():
+	select()
 
-var is_busy: bool = false
-func place_or_destroy():
-	if is_busy: return
-	is_busy = true
-	if building: await destroy()
-	else: await place()
-	is_busy = false
+func _on_selectable_deselected():
+	deselect()
 
-func place():
+func _on_building_destroyed():
+	selectable.enable()
+
+func add_build_option(option: BuildOption):
+	var f = func b():
+		build(option.building)
+	option.picked.connect(f)
+	build_ui.add_option(option)
+
+func select():
+	mesh.get_surface_override_material(0).albedo_color = Color.AQUAMARINE
+	build_ui.activate()
+
+func deselect():
+	mesh.get_surface_override_material(0).albedo_color = Color.GRAY
+	build_ui.deactivate()
+
+func build(build_: PackedScene):
+	deselect()
+	selectable.deselect()
+	selectable.disable()
 	destroy_effect.restart()
 	await get_tree().create_timer(1).timeout
-	var b = buildings.pick_random() as PackedScene
-	b = b.instantiate() as Node3D
-	add_child(b)
-	b.global_position = global_position
+	var b = build_.instantiate() as Building
 	building = b
-
-func destroy():
-	destroy_effect.restart()
-	await get_tree().create_timer(1).timeout
-	building.queue_free()
-	building = null
+	add_child(b)
+	building.global_position = global_position
+	building.destroyed.connect(_on_building_destroyed)
 "
 
-[sub_resource type="GDScript" id="GDScript_nlkxi"]
-resource_name = "plot"
-script/source = "extends Area3D
-"
+[sub_resource type="ArrayMesh" id="ArrayMesh_ck8su"]
+_surfaces = [{
+"aabb": AABB(-1, 0, -1, 2, 0.11, 2.00001),
+"format": 34896613377,
+"index_count": 84,
+"index_data": PackedByteArray(0, 0, 3, 0, 2, 0, 0, 0, 1, 0, 3, 0, 4, 0, 13, 0, 5, 0, 4, 0, 12, 0, 13, 0, 3, 0, 8, 0, 2, 0, 3, 0, 11, 0, 8, 0, 0, 0, 10, 0, 1, 0, 0, 0, 9, 0, 10, 0, 1, 0, 11, 0, 3, 0, 1, 0, 10, 0, 11, 0, 2, 0, 9, 0, 0, 0, 2, 0, 8, 0, 9, 0, 5, 0, 8, 0, 4, 0, 5, 0, 9, 0, 8, 0, 6, 0, 9, 0, 5, 0, 6, 0, 10, 0, 9, 0, 7, 0, 10, 0, 6, 0, 7, 0, 11, 0, 10, 0, 4, 0, 11, 0, 7, 0, 4, 0, 8, 0, 11, 0, 13, 0, 15, 0, 14, 0, 13, 0, 12, 0, 15, 0, 7, 0, 12, 0, 4, 0, 7, 0, 15, 0, 12, 0, 5, 0, 14, 0, 6, 0, 5, 0, 13, 0, 14, 0, 6, 0, 15, 0, 7, 0, 6, 0, 14, 0, 15, 0),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 16,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 254, 255, 0, 0, 255, 255, 0, 0, 254, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 0, 0, 253, 22, 185, 232, 253, 22, 0, 0, 253, 22, 185, 232, 0, 233, 0, 0, 1, 233, 185, 232, 0, 233, 0, 0, 1, 233, 185, 232, 253, 22, 0, 0, 0, 0, 185, 232, 0, 0, 0, 0, 0, 0, 185, 232, 254, 255, 0, 0, 255, 255, 185, 232, 254, 255, 0, 0, 255, 255, 185, 232, 0, 0, 0, 0, 8, 24, 255, 255, 8, 24, 0, 0, 8, 24, 255, 255, 246, 231, 0, 0, 246, 231, 255, 255, 246, 231, 0, 0, 246, 231, 255, 255, 8, 24, 0, 0)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_cqlcq"]
+resource_local_to_scene = true
+_surfaces = [{
+"aabb": AABB(-1, 0, -1, 2, 0.11, 2.00001),
+"attribute_data": PackedByteArray(0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 204, 12, 204, 12, 204, 12, 204, 12, 204, 12, 204, 12, 204, 12, 50, 243, 204, 12, 50, 243, 204, 12, 50, 243, 50, 243, 50, 243, 50, 243, 50, 243, 50, 243, 50, 243, 50, 243, 204, 12, 50, 243, 204, 12, 50, 243, 204, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 204, 12, 204, 12, 204, 12, 204, 12, 204, 12, 204, 12, 204, 12, 50, 243, 204, 12, 50, 243, 204, 12, 50, 243, 50, 243, 50, 243, 50, 243, 50, 243, 50, 243, 50, 243, 50, 243, 204, 12, 50, 243, 204, 12, 50, 243, 204, 12),
+"format": 34896613399,
+"index_count": 84,
+"index_data": PackedByteArray(1, 0, 9, 0, 7, 0, 1, 0, 3, 0, 9, 0, 12, 0, 39, 0, 15, 0, 12, 0, 36, 0, 39, 0, 10, 0, 25, 0, 8, 0, 10, 0, 33, 0, 25, 0, 2, 0, 30, 0, 4, 0, 2, 0, 28, 0, 30, 0, 5, 0, 35, 0, 11, 0, 5, 0, 32, 0, 35, 0, 6, 0, 27, 0, 0, 0, 6, 0, 24, 0, 27, 0, 17, 0, 26, 0, 14, 0, 17, 0, 29, 0, 26, 0, 19, 0, 29, 0, 17, 0, 19, 0, 31, 0, 29, 0, 22, 0, 31, 0, 19, 0, 22, 0, 34, 0, 31, 0, 14, 0, 34, 0, 22, 0, 14, 0, 26, 0, 34, 0, 41, 0, 46, 0, 43, 0, 41, 0, 38, 0, 46, 0, 21, 0, 37, 0, 13, 0, 21, 0, 45, 0, 37, 0, 16, 0, 42, 0, 18, 0, 16, 0, 40, 0, 42, 0, 20, 0, 47, 0, 23, 0, 20, 0, 44, 0, 47, 0),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 48,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 254, 255, 255, 191, 0, 0, 0, 0, 254, 255, 255, 63, 0, 0, 0, 0, 254, 255, 254, 127, 255, 255, 0, 0, 254, 255, 255, 63, 255, 255, 0, 0, 254, 255, 254, 127, 255, 255, 0, 0, 254, 255, 255, 191, 0, 0, 0, 0, 0, 0, 255, 191, 0, 0, 0, 0, 0, 0, 255, 63, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 255, 63, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 255, 191, 253, 22, 185, 232, 253, 22, 255, 191, 253, 22, 185, 232, 253, 22, 51, 228, 253, 22, 185, 232, 253, 22, 135, 192, 253, 22, 185, 232, 0, 233, 255, 191, 253, 22, 185, 232, 0, 233, 52, 100, 253, 22, 185, 232, 0, 233, 94, 192, 1, 233, 185, 232, 0, 233, 52, 100, 1, 233, 185, 232, 0, 233, 135, 192, 1, 233, 185, 232, 0, 233, 255, 191, 1, 233, 185, 232, 253, 22, 51, 228, 1, 233, 185, 232, 253, 22, 94, 192, 1, 233, 185, 232, 253, 22, 255, 191, 0, 0, 185, 232, 0, 0, 255, 191, 0, 0, 185, 232, 0, 0, 255, 255, 0, 0, 185, 232, 0, 0, 78, 192, 0, 0, 185, 232, 254, 255, 255, 191, 0, 0, 185, 232, 254, 255, 254, 127, 0, 0, 185, 232, 254, 255, 112, 192, 255, 255, 185, 232, 254, 255, 254, 127, 255, 255, 185, 232, 254, 255, 78, 192, 255, 255, 185, 232, 254, 255, 255, 191, 255, 255, 185, 232, 0, 0, 255, 255, 255, 255, 185, 232, 0, 0, 112, 192, 255, 255, 185, 232, 0, 0, 255, 191, 8, 24, 255, 255, 8, 24, 255, 191, 8, 24, 255, 255, 8, 24, 51, 228, 8, 24, 255, 255, 8, 24, 255, 191, 8, 24, 255, 255, 246, 231, 255, 191, 8, 24, 255, 255, 246, 231, 52, 100, 8, 24, 255, 255, 246, 231, 255, 191, 246, 231, 255, 255, 246, 231, 52, 100, 246, 231, 255, 255, 246, 231, 255, 191, 246, 231, 255, 255, 246, 231, 255, 191, 246, 231, 255, 255, 8, 24, 51, 228, 246, 231, 255, 255, 8, 24, 255, 191, 246, 231, 255, 255, 8, 24, 255, 191, 255, 127, 255, 255, 0, 0, 255, 127, 255, 127, 255, 255, 0, 0, 255, 127, 255, 127, 255, 255, 255, 127, 0, 0, 255, 127, 255, 255, 0, 0, 255, 127, 255, 255, 255, 127, 0, 0, 255, 127, 255, 255, 255, 127, 255, 127, 0, 0, 182, 214, 71, 169, 255, 255, 255, 127, 19, 232, 245, 139, 182, 214, 71, 169, 255, 255, 255, 127, 181, 245, 108, 107, 255, 255, 255, 127, 19, 232, 245, 139, 182, 214, 183, 86, 255, 255, 255, 127, 181, 245, 108, 107, 182, 214, 183, 86, 255, 127, 255, 255, 255, 255, 255, 127, 228, 236, 140, 137, 255, 127, 255, 255, 255, 127, 255, 255, 234, 244, 214, 105, 255, 127, 255, 255, 228, 236, 140, 137, 255, 127, 0, 0, 255, 255, 255, 127, 234, 244, 214, 105, 255, 127, 0, 0, 182, 214, 71, 169, 255, 255, 255, 127, 255, 255, 255, 127, 182, 214, 71, 169, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 182, 214, 183, 86, 255, 255, 255, 127, 255, 255, 255, 127, 182, 214, 183, 86)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_ck8su")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dgty8"]
+resource_local_to_scene = true
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qtj6n"]
 resource_local_to_scene = true
-size = Vector3(2, 1, 2)
+size = Vector3(2, 0.1, 2)
 
 [sub_resource type="Curve" id="Curve_tfdnf"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -98,18 +145,23 @@ particles_anim_loop = false
 resource_local_to_scene = true
 material = SubResource("StandardMaterial3D_x8t0h")
 
-[node name="Plot" type="Marker3D" node_paths=PackedStringArray("area", "destroy_effect")]
+[node name="Plot" type="Marker3D" node_paths=PackedStringArray("build_ui", "selectable", "destroy_effect", "mesh") groups=["plot"]]
 gizmo_extents = 1.0
 script = SubResource("GDScript_e34mi")
-area = NodePath("Area3D")
+build_ui = NodePath("BuildUI")
+selectable = NodePath("Selectable")
 destroy_effect = NodePath("GPUParticles3D")
-buildings = Array[PackedScene]([ExtResource("1_syuj6"), ExtResource("2_6rgch"), ExtResource("3_v32ry")])
+mesh = NodePath("MeshInstance3D")
 
-[node name="Area3D" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-script = SubResource("GDScript_nlkxi")
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.11, 0)
+mesh = SubResource("ArrayMesh_cqlcq")
+surface_material_override/0 = SubResource("StandardMaterial3D_dgty8")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+[node name="Selectable" parent="." instance=ExtResource("4_bsgbw")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Selectable"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.055, 0)
 shape = SubResource("BoxShape3D_qtj6n")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="."]
@@ -118,3 +170,5 @@ lifetime = 2.0
 one_shot = true
 process_material = SubResource("ParticleProcessMaterial_46swr")
 draw_pass_1 = SubResource("QuadMesh_g2lgx")
+
+[node name="BuildUI" parent="." instance=ExtResource("5_tup3x")]

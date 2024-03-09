@@ -1,0 +1,114 @@
+[gd_scene load_steps=16 format=3 uid="uid://dxiw7dy1ie3f0"]
+
+[ext_resource type="Script" path="res://city/buildings/building.tres.gd" id="1_1vdva"]
+[ext_resource type="PackedScene" uid="uid://ihvg3smb6x0t" path="res://selectable/selectable.tscn" id="2_qe4ub"]
+[ext_resource type="PackedScene" uid="uid://cge5y03p0p7hh" path="res://build_ui/build_ui.tscn" id="3_gx8kw"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5s1v2"]
+resource_local_to_scene = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bh5x8"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_w88fq"]
+resource_local_to_scene = true
+_surfaces = [{
+"aabb": AABB(-0.787868, 0.2, -0.787868, 1.57574, 1, 1.57575),
+"format": 34896613377,
+"index_count": 36,
+"index_data": PackedByteArray(0, 0, 3, 0, 1, 0, 0, 0, 2, 0, 3, 0, 2, 0, 7, 0, 3, 0, 2, 0, 6, 0, 7, 0, 6, 0, 5, 0, 7, 0, 6, 0, 4, 0, 5, 0, 4, 0, 1, 0, 5, 0, 4, 0, 0, 0, 1, 0, 2, 0, 4, 0, 6, 0, 2, 0, 0, 0, 4, 0, 7, 0, 1, 0, 3, 0, 7, 0, 5, 0, 1, 0),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 254, 255, 0, 0, 0, 0, 255, 255, 254, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 255, 255, 0, 0, 254, 255, 0, 0, 255, 255, 255, 255, 254, 255, 0, 0, 255, 255, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_6024m"]
+resource_local_to_scene = true
+resource_name = "building_Cube_001"
+_surfaces = [{
+"aabb": AABB(-0.787868, 0.2, -0.787868, 1.57574, 1, 1.57575),
+"attribute_data": PackedByteArray(255, 95, 255, 255, 255, 31, 255, 63, 255, 95, 0, 0, 255, 159, 255, 255, 255, 159, 0, 0, 255, 223, 255, 63, 255, 95, 255, 191, 255, 31, 255, 127, 255, 95, 255, 191, 255, 159, 255, 191, 255, 159, 255, 191, 255, 223, 255, 127, 255, 95, 255, 63, 255, 95, 255, 63, 255, 95, 255, 63, 255, 159, 255, 63, 255, 159, 255, 63, 255, 159, 255, 63, 255, 95, 255, 127, 255, 95, 255, 127, 255, 95, 255, 127, 255, 159, 255, 127, 255, 159, 255, 127, 255, 159, 255, 127),
+"format": 34896613399,
+"index_count": 36,
+"index_data": PackedByteArray(0, 0, 9, 0, 3, 0, 0, 0, 6, 0, 9, 0, 8, 0, 21, 0, 10, 0, 8, 0, 19, 0, 21, 0, 20, 0, 17, 0, 23, 0, 20, 0, 14, 0, 17, 0, 13, 0, 4, 0, 15, 0, 13, 0, 2, 0, 4, 0, 7, 0, 12, 0, 18, 0, 7, 0, 1, 0, 12, 0, 22, 0, 5, 0, 11, 0, 22, 0, 16, 0, 5, 0),
+"material": SubResource("StandardMaterial3D_bh5x8"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 254, 255, 84, 213, 0, 0, 0, 0, 254, 255, 255, 191, 0, 0, 0, 0, 254, 255, 255, 191, 0, 0, 255, 255, 254, 255, 84, 213, 0, 0, 255, 255, 254, 255, 255, 191, 0, 0, 255, 255, 254, 255, 255, 255, 0, 0, 0, 0, 0, 0, 84, 213, 0, 0, 0, 0, 0, 0, 255, 191, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 84, 213, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 255, 255, 0, 0, 254, 255, 255, 191, 255, 255, 0, 0, 254, 255, 255, 191, 255, 255, 0, 0, 254, 255, 84, 213, 255, 255, 255, 255, 254, 255, 255, 191, 255, 255, 255, 255, 254, 255, 255, 255, 255, 255, 255, 255, 254, 255, 84, 213, 255, 255, 0, 0, 0, 0, 255, 191, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 84, 213, 255, 255, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 0, 0, 84, 213, 84, 213, 84, 213, 0, 0, 255, 127, 255, 255, 255, 255, 84, 213, 84, 213, 255, 255, 255, 255, 255, 127, 255, 191, 84, 213, 84, 213, 0, 0, 255, 127, 255, 191, 255, 191, 84, 213, 84, 213, 255, 191, 255, 191, 255, 127, 255, 191, 0, 0, 255, 127, 255, 255, 255, 255, 170, 42, 170, 42, 255, 255, 255, 255, 255, 127, 255, 191, 170, 42, 170, 42, 0, 0, 255, 127, 255, 191, 255, 191, 170, 42, 170, 42, 255, 191, 255, 191, 255, 127, 255, 191, 170, 42, 170, 42)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_w88fq")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pywn4"]
+resource_local_to_scene = true
+size = Vector3(1.6, 1, 1.6)
+
+[sub_resource type="Curve" id="Curve_wyp7m"]
+resource_local_to_scene = true
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_sjsop"]
+resource_local_to_scene = true
+curve = SubResource("Curve_wyp7m")
+
+[sub_resource type="Gradient" id="Gradient_mpco3"]
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_w3ise"]
+resource_local_to_scene = true
+gradient = SubResource("Gradient_mpco3")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_i64sq"]
+resource_local_to_scene = true
+emission_shape = 3
+emission_box_extents = Vector3(0.8, 0.5, 0.8)
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = 0.5
+initial_velocity_max = 0.5
+gravity = Vector3(0, 0, 0)
+color_initial_ramp = SubResource("GradientTexture1D_w3ise")
+alpha_curve = SubResource("CurveTexture_sjsop")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_33xn4"]
+resource_local_to_scene = true
+transparency = 1
+vertex_color_use_as_albedo = true
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_dah1i"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_33xn4")
+
+[node name="Building" type="Node3D" node_paths=PackedStringArray("selectable", "build_ui", "destroy_particles")]
+script = ExtResource("1_1vdva")
+selectable = NodePath("Selectable")
+build_ui = NodePath("BuildUI")
+material = SubResource("StandardMaterial3D_5s1v2")
+destroy_particles = NodePath("GPUParticles3D")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+mesh = SubResource("ArrayMesh_6024m")
+surface_material_override/0 = SubResource("StandardMaterial3D_5s1v2")
+
+[node name="Selectable" parent="." instance=ExtResource("2_qe4ub")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Selectable"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("BoxShape3D_pywn4")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+emitting = false
+lifetime = 2.0
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_i64sq")
+draw_pass_1 = SubResource("QuadMesh_dah1i")
+
+[node name="BuildUI" parent="." instance=ExtResource("3_gx8kw")]
